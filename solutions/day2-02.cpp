@@ -3,10 +3,8 @@ using namespace std;
 
 #define IS_DEBUGGING false
 
-//not finished yet
-//TODO: implement isSafe, change logic to turn string into array of ints
-//attempt isSafe with each variation (remove one report at a time)
-//very inefficient but probably easiest way I can think of?
+//process: attempt isSafe with each variation (remove one report at a time)
+//very inefficient, should've used list or vector instead of arrays
 
 //pass in reports and length to loop through
 bool isSafe(int reports[105], int l){
