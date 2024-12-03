@@ -33,6 +33,7 @@
 
 # CPH
 /solutions/.cph/
+/solutions/*.bin
 
 # VSCode
-/.vscode/settings.json
+/.vscode/*
