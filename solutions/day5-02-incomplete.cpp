@@ -1,10 +1,37 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-#define IS_DEBUGGING false
+#define IS_DEBUGGING true
+
+// failed to solve this part
+// work in progress code for future reference
+// need to learn more about sorting
+// (still don't know how to implement quicksort and just use c++ built-in sort)
 
 bool mustBeBefore[105][105] = {0};
 int pages[105] = {0};
+bool pageCorrect[105] = {0};
+
+bool checkUpdate(int i){
+    bool correct = true;
+    for(int j=0; j < i; j++){
+        if(pageCorrect[j]) continue;
+        bool thisPageC = true;
+        for(int k=0; k < i; k++){
+            int n1 = pages[j], n2 = pages[k];
+            if(mustBeBefore[n1][n2] && j > k){
+                correct = false;
+                thisPageC = false;
+            }
+        }
+        if(thisPageC){
+            pageCorrect[j] = true;
+            if(IS_DEBUGGING) cout<<pages[j]<<" has been shown as correct.\n";
+        }
+
+    }
+    return correct;
+}
 
 void solve(){
     string inputLine;
@@ -51,8 +78,7 @@ void solve(){
     //then the test cases
     while(true){
         string num = "";
-        pages[105] = {0};
-        bool correct = true;
+        for(int z=0;z<105;z++) {pages[z] = 0; pageCorrect[z] = false;}
         
         int i=0;
 
@@ -73,20 +99,32 @@ void solve(){
                 num += c;
             }
         }
-        for(int j=0; j < i; j++){
-            for(int k=0; k < i; k++){
-                int n1 = pages[j], n2 = pages[k];
-                if(mustBeBefore[n1][n2] && j > k){
-                    correct = false;
+
+        if(IS_DEBUGGING) cout<<"Received Input of Rule: " + inputLine + ". Beginning its analysis.\n";
+
+        if(checkUpdate(i)){
+            if(IS_DEBUGGING) cout<<"Rule " + inputLine + " was already correct, no need to add its middle.\n";
+        }else{
+            //using randomness to swap positions of two incorrect tests
+            srand((unsigned)time(0)); 
+            int steps = 0;
+
+            while(!checkUpdate(i)){
+                steps ++; if(steps > 2000) break;
+                int r = (rand()%(i-1));
+                int r2 = (rand()%(i-1));
+                if(!pageCorrect[r] && !pageCorrect[r2]){
+                    if(IS_DEBUGGING) cout<<"Swapping "<<pages[r]<<" and "<<pages[r2]<<"\n";
+
+                    int temp = pages[r];
+                    pages[r] = pages[r2];
+                    pages[r2] = temp;
                 }
             }
-        }
 
-        if(correct){
-    if(IS_DEBUGGING) cout<<"Rule " + inputLine + " is correct. Adding its middle: "<<pages[(i)/2]<<"\n";
+            if(IS_DEBUGGING) cout<<"Rule " + inputLine + " corrected middle: "<<pages[(i)/2]<<"\n";
             sum += pages[(i)/2];
         }
-
     }
 
     cout<<sum<<"\n";
