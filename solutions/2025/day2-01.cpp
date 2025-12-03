@@ -1,43 +1,55 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-const int MAXROT = 99;
-
-void solve(){
-    int flag = 0;
-    string input;
-    int curROT = 50;
-    while(true){
-        getline(cin, input);
-        if(input.empty()){
-            break;
-        }
-        if(input[0] == 'L'){
-            input.erase(0, 1);
-            int steps = stoi(input);
-            while(steps--){
-                curROT -= 1;
-                if(curROT == -1){
-                    curROT = 99;
-                }
+long long searchforrange(long long firstn, long long secondn){
+    long long sum = 0;
+    for(long long ll = firstn; ll <= secondn; ll++){
+        //cout<<"trying ll: "<<ll<<"\n";
+        string lls = to_string(ll);
+        int llslen = lls.length();
+        //cout<<"llslen: "<<llslen<<"\n";
+        // only need to check even lengths
+        if(llslen % 2 == 0){
+            string llsfirsthalf = lls.substr(0, llslen/2);
+            string llssecondhalf = lls.substr(llslen/2);
+            //cout<<"llsfirsthalf: "<<llsfirsthalf<<"\n";
+            //cout<<"llssecondhalf: "<<llssecondhalf<<"\n";
+            if(llsfirsthalf == llssecondhalf){
+                sum += ll;
             }
-        }else if (input[0] == 'R'){
-            input.erase(0, 1);
-            int steps = stoi(input);
-            while(steps--){
-                curROT += 1;
-                if(curROT == 100){
-                    curROT = 0;
-                }
-            }
-        }
-
-        if(curROT == 0){
-            flag ++;
         }
     }
-    cout<<flag<<"\n";
-    system("pause");
+    return sum;
+}
+
+void solve(){
+    long long sum = 0;
+    string input;
+    getline(cin, input);
+    // adds a comma for easier processing (, after every range)
+    input = input + ","; 
+    string firstnum = "", secondnum = "";
+    long long firstnumll = 0, secondnumll = 0;
+    bool first = true;
+    for(char c:input){
+        //cout<<"SCANNED CHAR: "<<c<<"\n";
+        if (c == '-'){
+            firstnumll = stoll(firstnum);
+            first = false;
+        }else if (c == ','){
+            secondnumll = stoll(secondnum);
+            first = true;
+            //cout<<"Attempting searchforrange: "<<firstnumll<<" "<<secondnumll<<"\n";
+            sum += searchforrange(firstnumll, secondnumll);
+            firstnum= "";
+            secondnum= "";
+        }else if (first){
+            firstnum += c;
+        }else{
+            secondnum += c;
+        }
+    }
+    cout<<sum<<"\n";
 }
 
 int main() {
