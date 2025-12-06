@@ -3,7 +3,7 @@ using namespace std;
 
 typedef long long ll;
 
-const bool DEB = true;
+const bool DEB = false;
 
 int nums[1005][15];
 
@@ -40,7 +40,6 @@ void solve(){
     input += 'Z';
     
     for(i = 0; i < input.length(); i++){
-        if(input[i] == ' ') continue;
         if(input[i] == '+'){
             // note j must start at sign (beginning of numbers in the column)
             for(int j=i; j < first_one_not_space(input, i+1); j++){
