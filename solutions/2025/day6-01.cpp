@@ -7,7 +7,19 @@ const bool DEB = false;
 
 int nums[1005][15];
 
-//absolute mess of a code, wrote it while staying up overnight and just whatever works
+void nums_from_string(int row, string s){
+    int column = 0;
+    string curNum = "";
+    for(char c: s){
+        if(c <= '9' && c >= '0'){
+            curNum += c;
+        }else if(!curNum.empty()){
+            nums[column][row] = stoi(curNum);
+            column++;
+            curNum = "";
+        }
+    }
+}
 
 void solve(){
     ll sum = 0;
@@ -22,33 +34,9 @@ void solve(){
             break;
         }
         input.append(" "); //append string to allow for formatting the last number
-        input.erase(0, input.find_first_not_of(' ')); // remove leading spaces
         if(DEB) cout<<"RECEIVED "<<input<<"\n";
-        //start stores starting point of number, l stores length of number
-        // k stores index of element in input currently looping through
-        int start = 0, l = 0, k = 0;  
-        //j stores the number index in row(nums array)
-        int j = 0;
-        while(k <= input.length() - 1){
-            bool convertedNumThisTime = false;
-            while(input[k] == ' '){
-                if(!convertedNumThisTime){
-                    //if(DEB) cout<<"current start: "<<start<<"l: "<<l<<"\n";
-                    if(DEB) cout<<"attempting to store \'"<<input.substr(start, l)<<"\'\n";
-                    if(DEB) cout<<"\t at position column:"<<j<<" row: "<<i<<"\n";
-                    nums[j][i] = stoi(input.substr(start, l));
-                    j ++;
-                    start = start + l;
-                    l = 0;
-                    convertedNumThisTime = true;
-                }else{
-                    start++;
-                    k++;
-                }
-            }
-            k++;
-            l++;
-        }
+
+        nums_from_string(i, input);
         i++;
     }
     int rows = i;
@@ -58,7 +46,6 @@ void solve(){
     // have to do this because whitespace between operators means we can't just use the same i
     int operatorID = 0; 
     for(i = 0; i < input.length(); i++){
-        if(input[i] == ' ') continue;
         if(input[i] == '+'){
             for(int j = 0; j < rows; j++){
                 sum += nums[operatorID][j];
