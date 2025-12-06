@@ -27,6 +27,7 @@ void solve(){
     int maxi = i - 1;
 
     //running the entire thing a bunch of times because once sometimes doesn't solve it for large enough numbers of ranges
+    //can be optimized a bit just by checking if no more merge can be done 
     for(int attempts = 0; attempts <= maxi; attempts++){
         for(i = 0; i <= maxi; i++){
             if(freshranges[i].first == -1) continue;
