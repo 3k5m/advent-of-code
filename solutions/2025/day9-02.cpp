@@ -3,15 +3,25 @@ using namespace std;
 
 typedef long long ll;
 
-const bool DEB = false;
+struct coords {
+    ll x, y;
+};
 
-pair<ll, ll> red_tiles[1005];
+const bool DEB = false;
+const int MAXM = 100005;
+
+coords red_tiles[1005];
 ll largest_area = 0, min_x = 1e12, min_y = 1e12, largest_x = 0, largest_y = 0;
 int maxi;
 
-bool checkpoint(ll x, ll y){
-    if(x <= largest_x && x >= min_x && y <= largest_y && y >= min_y){
-        return true;
+bool checkpoint(coords point){
+    int intersections = 0;
+    for(int i = 0; i < maxi; i++){
+        coords p1 = red_tiles[i];
+        coords p2 = red_tiles[(i+1) % maxi];
+        if(point.y > min(p1.y, p2.y) && point.y <){
+
+        }
     }
     return false;
 }
@@ -22,27 +32,26 @@ void solve(){
 
     int i = 0;
 
+    int prevx = -1, prevy = -1;
     while(true){
         getline(cin, input, ',');
         if(input.empty()) break; // need to enter comma after pasting input
-        red_tiles[i].first = stoll(input);
-        if(red_tiles[i].first > largest_x) largest_x = red_tiles[i].first;
-        if(red_tiles[i].first < min_x) min_x = red_tiles[i].first;
+        ll ix = stoll(input);
+        red_tiles[i].x = ix;
         getline(cin, input);
-        red_tiles[i].second = stoll(input);
-        if(red_tiles[i].second > largest_y) largest_y = red_tiles[i].second;
-        if(red_tiles[i].second < min_y) min_y = red_tiles[i].second;
+        ll iy = stoll(input);
+        red_tiles[i].y = iy;
         i++;
     }
     maxi = i;
     for(i = 0; i < maxi; i++){
         for(int j=0; j< maxi; j++){
-            ll new_area = (red_tiles[i].first - red_tiles[j].first + 1) * (red_tiles[i].second - red_tiles[j].second + 1);
+            ll new_area = (red_tiles[i].x - red_tiles[j].x + 1) * (red_tiles[i].y - red_tiles[j].y + 1);
             if(new_area > largest_area){
-                ll p1x = max(red_tiles[i].first, red_tiles[j].first);
-                ll p1y = max(red_tiles[i].second, red_tiles[j].second);
-                ll p2x = min(red_tiles[i].first, red_tiles[j].first);
-                ll p2y = min(red_tiles[i].second, red_tiles[j].second);
+                ll p1x = max(red_tiles[i].x, red_tiles[j].x);
+                ll p1y = max(red_tiles[i].y, red_tiles[j].y);
+                ll p2x = min(red_tiles[i].x, red_tiles[j].x);
+                ll p2y = min(red_tiles[i].y, red_tiles[j].y);
                 if(checkpoint(p1x, p1y) && checkpoint(p2x, p2y)){
                     largest_area = new_area;
                 }
