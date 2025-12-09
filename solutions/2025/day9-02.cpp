@@ -7,7 +7,7 @@ struct coords {
     ll x, y;
 };
 
-const bool DEB = true;
+const bool DEB = false;
 const int MAXM = 100005;
 
 coords red_tiles[1005];
@@ -30,8 +30,6 @@ bool lines_intersect(coords p1, coords p2, coords p3, coords p4){
     else  cout<<"error, received invalid line segment!\n";
 
     if((horizontal && horizontal2) || (vertical && vertical2)){
-        // should be false as it is allowed for p1 and p2 to be entirely on p3p4, but not the reverse!
-        //if(on_line(p1, p3, p4) && on_line(p2, p3, p4)) return false; 
         if(on_line(p1, p3, p4)) return true;
         if(on_line(p2, p3, p4)) return true;
         if(on_line(p3, p1, p2)) return true;
@@ -66,30 +64,6 @@ bool checkline(coords p1, coords p2){
     return true;
 }
 
-bool checkpoint(coords point){
-    if(DEB) cout<<"\t checking point "<<point.x<<", "<<point.y<<"\n";
-    int intersections = 0;
-    for(int i = 0; i < maxi; i++){
-        coords p1 = red_tiles[i];
-        coords p2 = red_tiles[(i+1) % maxi];
-        // special case for when point is on the edge
-        if(point.x == p1.x && p1.x == p2.x && point.y >= min(p1.y, p2.y) && point.y <= max(p1.y, p2.y)){
-            return true;
-        }
-        if(point.y == p1.y && p1.y == p2.y && point.x >= min(p1.x, p2.x) && point.x <= max(p1.x, p2.x)){
-            return true;
-        }
-        if(point.y > min(p1.y, p2.y) && point.y < max(p1.y, p2.y) && point.x <= max(p1.x, p2.x)){
-            if(DEB) cout<<"\t \t point intersects with p1 "<<p1.x<<", "<<p1.y<<" p2 "<<p2.x<<", "<<p2.y<<"\n";
-            //ll intersect = (point.y - p1.y) * (p2.x - p1.x) / (p2.y - p1.y) + p1.x;
-            if(p1.x == p2.x){
-                intersections++;
-            }
-        }
-    }
-    return intersections % 2 == 1;
-}
-
 void solve(){
     ll sum = 0;
     string input;
@@ -113,86 +87,19 @@ void solve(){
             ll new_area = (abs(red_tiles[i].x - red_tiles[j].x) + 1) * (abs(red_tiles[i].y - red_tiles[j].y) + 1);
             if(new_area > largest_area){
                 ll ix = red_tiles[i].x, iy = red_tiles[i].y, jx = red_tiles[j].x, jy = red_tiles[j].y;
-                coords p1, p2, p3, p4, p5, p6; // checking other 2 corners as well as four side midpoints
-                coords p7; // also checking the middle point
-                coords p8, p9, p10, p11; // also checking 4 points that reach a quarter distance
-                p1.x = jx;
-                p1.y = iy;
-                p2.x = ix;
-                p2.y = jy;
+                ll minx = min(ix, jx), miny = min(iy, jy), maxx = max(ix, jx), maxy = max(iy, jy);
 
-                p3.x = min(ix, jx) + abs(ix - jx) / 2;
-                p3.y = min(iy, jy);
-                p4.x = min(ix, jx) + abs(ix - jx) / 2;
-                p4.y = max(iy, jy);
-
-                p5.x = min(ix, jx); 
-                p5.y = min(iy, jy) + abs(iy - jy) / 2;
-                p6.x = max(ix, jx); 
-                p6.y = min(iy, jy) + abs(iy - jy) / 2;
-
-                p7.x = min(ix, jx) + abs(ix - jx) / 2;
-                p7.y = min(iy, jy) + abs(iy - jy) / 2;
-
-                p8.x = min(ix, jx) + abs(ix - jx) / 4;
-                p8.y = min(iy, jy) + abs(iy - jy) / 4;
-
-                p9.x = min(ix, jx) + abs(ix - jx) * 3 / 4;
-                p9.y = min(iy, jy) + abs(iy - jy) / 4;
-
-                p10.x = min(ix, jx) + abs(ix - jx) / 4;
-                p10.y = min(iy, jy) + abs(iy - jy) * 3 / 4;
-
-                p11.x = min(ix, jx) + abs(ix - jx) * 3 / 4;
-                p11.y = min(iy, jy) + abs(iy - jy) * 3 / 4;
-
-                if(DEB) cout<<"checking edges for i "<<ix<<", "<<iy<<" AND j "<<jx<<", "<<jy<<"\n";
-
-                bool good_flag = true;
-                coords sc;
-                ll minx = min(ix, jx), miny = min(iy, jy), maxx = max(ix, jx), maxy = max(iy, jy), absx = max(abs(ix - jx) * 1 / 1000, 1LL), absy = max(abs(iy - jy) * 1 / 1000, 1LL);
-                /*for(sc.x = minx, sc.y = miny; sc.x <= maxx && sc.y <= maxy; sc.x+=absx){
-                    if(!checkpoint(sc)){
-                        good_flag = false;
-                        break;
-                    }
-                }
-                if(good_flag) for(sc.x = minx, sc.y = maxy; sc.x <= maxx && sc.y <= maxy; sc.x+=absx){
-                    if(!checkpoint(sc)){
-                        good_flag = false;
-                        break;
-                    }
-                }
-                if(good_flag) for(sc.x = minx, sc.y = miny; sc.x <= maxx && sc.y <= maxy; sc.y+=absy){
-                    if(!checkpoint(sc)){
-                        good_flag = false;
-                        break;
-                    }
-                }
-                if(good_flag) for(sc.x = maxx, sc.y = miny; sc.x <= maxx && sc.y <= maxy; sc.y+=absy){
-                    if(!checkpoint(sc)){
-                        good_flag = false;
-                        break;
-                    }
-                }*/
-                coords corner1, corner2, corner3, corner4, corner5, corner6, corner7, corner8;
+                coords corner1, corner2, corner3, corner4;
                 corner1.x = minx + 1, corner1.y = miny + 1;
                 corner2.x = minx + 1, corner2.y = maxy - 1;
                 corner3.x = maxx - 1, corner3.y = miny + 1;
                 corner4.x = maxx - 1, corner4.y = maxy - 1;
-
-                corner5.x = minx + 1, corner5.y = maxy - 1;
-                corner6.x = maxx, corner6.y = maxy;
-                corner7.x = maxx, corner7.y = miny;
-                corner8.x = maxx, corner8.y = maxy;
+                
+                if(DEB) cout<<"checking edges for i "<<ix<<", "<<iy<<" AND j "<<jx<<", "<<jy<<"\n";
                 if(checkline(corner1, corner2) && checkline(corner1, corner3) && checkline(corner2, corner4) && checkline(corner3, corner4)){
                     if(DEB) cout<<"new largest area found: "<<new_area<<"\n";
                     largest_area = new_area;
                 }
-
-                //if(checkpoint(p1) && checkpoint(p2) && checkpoint(p3) && checkpoint(p4) && checkpoint(p5) && checkpoint(p6) && checkpoint(p7)
-                //  && checkpoint(p8) && checkpoint(p9) && checkpoint(p10) && checkpoint(p11) && good_flag){
-                //}
             }
         }
     }
