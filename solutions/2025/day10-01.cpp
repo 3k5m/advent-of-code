@@ -9,6 +9,7 @@ const int MAXM = 15;
 struct light_state{
     bool required_lights[MAXM] = {0};
     int lights;
+    // returns if ls is equal to this light_state
     bool compare_states(light_state ls){
         if(ls.lights != lights) return false;
         for(int i = 0; i < lights; i++){
@@ -74,6 +75,7 @@ machine process_input(string input){
     return m;
 }
 
+// outputs the machine received
 void output_machine(machine m){
     cout<<"PROCESSED m with LIGHTS ";
     for(int i = 0; i<m.ls.lights; i ++){
@@ -98,6 +100,7 @@ void output_machine(machine m){
     cout<<"\n";
 }
 
+// recursively attempt to press buttons, with steps being the number of layers for the search
 bool machine_bfs(machine m, int button, light_state cur_lights, int steps, vector<int> previously_pressed){
     bool flag = false;
     for(int i : m.buttons[button]){
@@ -123,6 +126,7 @@ bool machine_bfs(machine m, int button, light_state cur_lights, int steps, vecto
     return false;
 }
 
+// presses all buttons for machine m, then return the light_state (starting from all lights being off)
 light_state press_all_buttons(machine m){
     light_state ls;
     ls.lights = m.ls.lights;
@@ -164,6 +168,7 @@ int solve_machine(machine m){
             break;
         }
     }
+    // second search, starting with all buttons pressed and working backwards
     layers = 0;
     while(true){
         layers++;
